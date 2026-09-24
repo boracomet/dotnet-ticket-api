@@ -1,8 +1,8 @@
 # Ticket API — .NET 8
 
-Layered ticket management API with JWT auth, **Admin/User** roles, pagination, filtering, and a strict status workflow.
+Layered ticket management API with JWT auth, **Admin/User** roles, pagination, filtering, and a strict status workflow — plus a Turkish React UI (Ticket Board).
 
-> **TR:** Katmanlı ticket API — JWT, Admin/User rolleri, sayfalama/filtreleme ve durum geçiş kuralları.
+> **TR:** Katmanlı ticket API — JWT, Admin/User rolleri, sayfalama/filtreleme, durum geçiş kuralları ve soft UI.
 
 ## Architecture / Mimari
 
@@ -17,10 +17,23 @@ web/                     → Vite + React + TypeScript UI (Nginx)
 ## Features / Özellikler
 
 - Register / login with JWT
-- Tickets CRUD
+- Tickets: create (User), list/filter, detail; delete & status change (Admin)
 - Pagination + filter by `status`, `priority`, `search`
 - Status workflow: `Open → InProgress → Resolved → Closed` (illegal transitions → `422`)
 - Role rules: users see own/assigned tickets; admins see all
+- Replies with Markdown; attachments PDF/JPG/PNG (max 3 files, 5 MB each)
+- Email notifications on reply (SMTP via `.env` or admin panel)
+
+### Role rules
+
+| Action | User | Admin |
+|--------|------|-------|
+| Create ticket | ✓ | ✗ |
+| Delete ticket | ✗ | ✓ |
+| Change status | ✗ | ✓ |
+| Reply (if can view) | ✓ | ✓ |
+
+Anyone who can see a ticket (creator, assignee, or admin) can reply.
 
 **Seed users (first run)**
 
@@ -37,11 +50,12 @@ docker compose up --build
 ```
 
 - **Web UI:** http://localhost:3000  
-- API: http://localhost:8080  
-- Swagger: http://localhost:8080/swagger  
+- **API:** http://localhost:8080  
+- **Swagger:** http://localhost:8080/swagger  
 
-> Ports via `WEB_PORT` / `APP_PORT` / `POSTGRES_PORT`.  
-> Run this stack **or** Mini Wallet at a time if both use defaults 8080/3000/5432.
+Ports via `WEB_PORT` (default **3000**), `APP_PORT` (default **8080**), `POSTGRES_PORT`. If a port is already in use, change `WEB_PORT` (or the others) in `.env`.
+
+> Run this stack **or** another app that claims the same defaults (8080/3000/5432) at a time.
 
 ## Local (SQLite)
 
@@ -60,11 +74,45 @@ export Database__Provider=Postgres
 dotnet run --project src/TicketApi.Api
 ```
 
-
-
 ## Web UI (React)
 
-Soft professional Turkish UI: login/register, ticket board with status/priority filters, pagination, create ticket, workflow status changes, and delete (creator or admin).
+Soft professional Turkish UI: login/register, ticket board with filters, create ticket (User), detail with Markdown replies + attachments, admin status/delete, and admin SMTP settings.
+
+### Auth — login & register
+
+Login with seed demo accounts, or register a new user.
+
+![Login](docs/screenshots/ui-login.png)
+
+*Giriş — demo hesaplar ekranda listelenir*
+
+![Register](docs/screenshots/ui-register.png)
+
+*Kayıt — yeni User hesabı*
+
+### Board
+
+User board: own/assigned tickets, status/priority filters, search, horizontal list, pagination. Admins see all tickets; only Users get “+ Yeni ticket”.
+
+![Ticket board](docs/screenshots/ui-board.png)
+
+*Pano — filtreler, öncelik etiketleri, sayfalama*
+
+### Create ticket
+
+Markdown toolbar and file attach (PDF/JPG/PNG, max 3 × 5 MB). Admins cannot create tickets.
+
+![Create ticket](docs/screenshots/ui-ticket-create.png)
+
+*Yeni ticket — Markdown + Dosya ekle*
+
+### Ticket detail & replies
+
+Markdown body, reply composer, attachments. Status dropdown is Admin-only. Replies notify by email when SMTP is enabled.
+
+![Ticket detail](docs/screenshots/ui-ticket-detail.png)
+
+*Detay — Markdown gövde, cevap composer + dosya*
 
 ### Local development
 
@@ -81,9 +129,35 @@ cd web && npm install && npm run dev
 
 `docker compose up --build` serves the UI on **:3000** (Nginx → API).
 
-Screenshots: `web/docs/screenshots/`.
-
 CORS is enabled for `http://localhost:3000` and `:5173`. Enums serialize as strings (`Open`, `High`, …) via `JsonStringEnumConverter`.
+
+## Email / SMTP
+
+When someone replies:
+
+- **User** replies → admins get `"{FullName} cevap verdi"`
+- **Admin** replies → ticket owner (and assignee, if any) get `"Admin cevap verdi"`
+
+**Configuration order**
+
+1. Prefer `.env` / Compose env (`SMTP_*` → `Smtp__*`).
+2. If `SMTP_HOST` is empty, the API falls back to values saved in the admin Settings form (for local trials).
+3. The admin form’s “Test e-postası” uses the form/DB settings (not for production config).
+
+| Env key | Purpose |
+|---------|---------|
+| `SMTP_HOST` | SMTP server (empty → use admin form / DB) |
+| `SMTP_PORT` | Port (default `587`) |
+| `SMTP_USERNAME` | Username |
+| `SMTP_PASSWORD` | Password |
+| `SMTP_FROM_EMAIL` | From address |
+| `SMTP_FROM_NAME` | From display name (default `Ticket Board`) |
+| `SMTP_ENABLE_SSL` | SSL / STARTTLS (default `true`) |
+| `SMTP_ENABLED` | Send notifications (default `false`) |
+
+![Admin SMTP settings](docs/screenshots/ui-settings.png)
+
+*Admin — E-posta bildirimleri / SMTP (deneme formu)*
 
 ## Tests
 
@@ -104,8 +178,6 @@ curl -s -X POST http://localhost:8080/api/v1/tickets \
   -H 'Content-Type: application/json' \
   -d '{"title":"Login bug","description":"Cannot login on Safari","priority":"High"}'
 ```
-
-Screenshots: `docs/screenshots/`.
 
 ## License
 
