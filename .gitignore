@@ -1,0 +1,16 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+.env
+*.db
+*.db-shm
+*.db-wal
+appsettings.*.local.json
+.DS_Store
+TestResults/
+node_modules/
+web/dist/
+web/node_modules/
