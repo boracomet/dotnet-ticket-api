@@ -1,8 +1,8 @@
-# Ticket API — .NET 8
+# Ticket API: .NET 8
 
-Layered ticket management API with JWT auth, **Admin/User** roles, pagination, filtering, and a strict status workflow — plus a Turkish React UI (Ticket Board).
+Layered ticket management API with JWT auth, **Admin/User** roles, pagination, filtering, and a strict status workflow, plus a Turkish React UI (Ticket Board).
 
-> **TR:** Katmanlı ticket API — JWT, Admin/User rolleri, sayfalama/filtreleme, durum geçiş kuralları ve soft UI.
+> **TR:** Katmanlı ticket API: JWT, Admin/User rolleri, sayfalama/filtreleme, durum geçiş kuralları ve soft UI.
 
 ## Architecture / Mimari
 
@@ -42,7 +42,7 @@ Anyone who can see a ticket (creator, assignee, or admin) can reply.
 | admin@ticket.local | Admin123! | Admin |
 | user@ticket.local | User1234! | User |
 
-## Quick start — Docker Compose
+## Quick start: Docker Compose
 
 ```bash
 cp .env.example .env
@@ -78,17 +78,17 @@ dotnet run --project src/TicketApi.Api
 
 Soft professional Turkish UI: login/register, ticket board with filters, create ticket (User), detail with Markdown replies + attachments, admin status/delete, and admin SMTP settings.
 
-### Auth — login & register
+### Auth: login & register
 
 Login with seed demo accounts, or register a new user.
 
 ![Login](docs/screenshots/ui-login.png)
 
-*Giriş — demo hesaplar ekranda listelenir*
+*Giriş: demo hesaplar ekranda listelenir*
 
 ![Register](docs/screenshots/ui-register.png)
 
-*Kayıt — yeni User hesabı*
+*Kayıt: yeni User hesabı*
 
 ### Board
 
@@ -96,7 +96,7 @@ User board: own/assigned tickets, status/priority filters, search, horizontal li
 
 ![Ticket board](docs/screenshots/ui-board.png)
 
-*Pano — filtreler, öncelik etiketleri, sayfalama*
+*Pano: filtreler, öncelik etiketleri, sayfalama*
 
 ### Create ticket
 
@@ -104,7 +104,7 @@ Markdown toolbar and file attach (PDF/JPG/PNG, max 3 × 5 MB). Admins cannot cre
 
 ![Create ticket](docs/screenshots/ui-ticket-create.png)
 
-*Yeni ticket — Markdown + Dosya ekle*
+*Yeni ticket: Markdown + Dosya ekle*
 
 ### Ticket detail & replies
 
@@ -112,7 +112,7 @@ Markdown body, reply composer, attachments. Status dropdown is Admin-only. Repli
 
 ![Ticket detail](docs/screenshots/ui-ticket-detail.png)
 
-*Detay — Markdown gövde, cevap composer + dosya*
+*Detay: Markdown gövde, cevap composer + dosya*
 
 ### Local development
 
@@ -157,7 +157,7 @@ When someone replies:
 
 ![Admin SMTP settings](docs/screenshots/ui-settings.png)
 
-*Admin — E-posta bildirimleri / SMTP (deneme formu)*
+*Admin: E-posta bildirimleri / SMTP (deneme formu)*
 
 ## Tests
 
@@ -181,4 +181,4 @@ curl -s -X POST http://localhost:8080/api/v1/tickets \
 
 ## License
 
-MIT — portfolio demo by Bora Ata Türkoğlu.
+MIT: portfolio demo by Bora Ata Türkoğlu.
